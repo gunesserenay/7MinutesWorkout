@@ -1,5 +1,7 @@
 package com.moonsunapp.a7minutesworkout
 
+import android.media.MediaPlayer
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
@@ -9,6 +11,7 @@ import android.view.View
 import android.widget.Toast
 import com.moonsunapp.a7minutesworkout.databinding.ActivityExerciseBinding
 import com.moonsunapp.a7minutesworkout.databinding.ActivityMainBinding
+import java.lang.Exception
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -25,6 +28,7 @@ class ExerciseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private var currentExercisePosition = -1
 
     private var tts: TextToSpeech? = null
+    private var playerMedia: MediaPlayer? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,6 +50,16 @@ class ExerciseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     }
 
     private fun setUpRestView() {
+
+        try {
+            val soundURI = Uri.parse("android.resource://com.moonsunapp.a7minutesworkout/"+R.raw.press_start)
+            playerMedia=MediaPlayer.create(applicationContext,soundURI)
+            playerMedia?.isLooping=false
+            playerMedia?.start()
+        }
+        catch (e:Exception){
+            e.printStackTrace()
+        }
 
         binding?.flProgressBar?.visibility = View.VISIBLE
         binding?.tvTitle?.visibility = View.VISIBLE
@@ -139,6 +153,9 @@ class ExerciseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         if (tts!=null){
             tts!!.stop()
             tts!!.shutdown()
+        }
+        if (playerMedia!=null){
+            playerMedia!!.stop()
         }
         binding = null
     }

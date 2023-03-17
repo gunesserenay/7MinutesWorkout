@@ -7,8 +7,10 @@ import android.os.Bundle
 import android.os.CountDownTimer
 import android.speech.tts.TextToSpeech
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.Toast
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.moonsunapp.a7minutesworkout.databinding.ActivityExerciseBinding
 import com.moonsunapp.a7minutesworkout.databinding.ActivityMainBinding
 import java.lang.Exception
@@ -30,6 +32,8 @@ class ExerciseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private var tts: TextToSpeech? = null
     private var playerMedia: MediaPlayer? = null
 
+    private var exerciseAdapter:ExerciseStatusAdapter?=null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityExerciseBinding.inflate(layoutInflater)
@@ -47,8 +51,14 @@ class ExerciseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             onBackPressed()
         }
         setUpRestView()
+        setupExerciseStatusRecyclerViewAdapter()
     }
 
+    private fun setupExerciseStatusRecyclerViewAdapter(){
+        binding?.rvExerciseStatus?.layoutManager=LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false)
+        exerciseAdapter= ExerciseStatusAdapter(exerciseList!!)
+        binding?.rvExerciseStatus?.adapter=exerciseAdapter
+    }
     private fun setUpRestView() {
 
         try {

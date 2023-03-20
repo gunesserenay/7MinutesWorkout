@@ -1,5 +1,6 @@
 package com.moonsunapp.a7minutesworkout
 
+import android.app.Dialog
 import android.content.Intent
 import android.media.MediaPlayer
 import android.net.Uri
@@ -14,6 +15,7 @@ import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.moonsunapp.a7minutesworkout.databinding.ActivityExerciseBinding
 import com.moonsunapp.a7minutesworkout.databinding.ActivityMainBinding
+import com.moonsunapp.a7minutesworkout.databinding.DialogCustomBackConfirmationBinding
 import java.lang.Exception
 import java.util.*
 import kotlin.collections.ArrayList
@@ -23,11 +25,11 @@ class ExerciseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
     private var restTimer: CountDownTimer? = null
     private var restProgress = 0
-    private var restTimerDuration:Long=1
+    private var restTimerDuration: Long = 1
 
     private var exerciseTimer: CountDownTimer? = null
     private var exerciseProgress = 0
-    private var exerciseTimerDuration:Long=1
+    private var exerciseTimerDuration: Long = 1
 
     private var exerciseList: ArrayList<ExerciseModel>? = null
     private var currentExercisePosition = -1
@@ -35,7 +37,7 @@ class ExerciseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private var tts: TextToSpeech? = null
     private var playerMedia: MediaPlayer? = null
 
-    private var exerciseAdapter:ExerciseStatusAdapter?=null
+    private var exerciseAdapter: ExerciseStatusAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,26 +53,45 @@ class ExerciseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         exerciseList = Constants.defaultExerciseList()
 
         binding?.toolbarExercise?.setNavigationOnClickListener {
-            onBackPressed()
+            customDialogForBackButton()
         }
         setUpRestView()
         setupExerciseStatusRecyclerViewAdapter()
     }
 
-    private fun setupExerciseStatusRecyclerViewAdapter(){
-        binding?.rvExerciseStatus?.layoutManager=LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false)
-        exerciseAdapter= ExerciseStatusAdapter(exerciseList!!)
-        binding?.rvExerciseStatus?.adapter=exerciseAdapter
+    private fun customDialogForBackButton() {
+        val customDialog = Dialog(this)
+        val dialogBinding = DialogCustomBackConfirmationBinding.inflate(layoutInflater)
+        customDialog.setContentView(dialogBinding.root)
+
+        customDialog.setCanceledOnTouchOutside(false)
+
+        dialogBinding.btnYes.setOnClickListener {
+            this@ExerciseActivity.finish()
+            customDialog.dismiss()
+        }
+        dialogBinding.btnNo.setOnClickListener {
+            customDialog.dismiss()
+        }
+        customDialog.show()
     }
+
+    private fun setupExerciseStatusRecyclerViewAdapter() {
+        binding?.rvExerciseStatus?.layoutManager =
+            LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        exerciseAdapter = ExerciseStatusAdapter(exerciseList!!)
+        binding?.rvExerciseStatus?.adapter = exerciseAdapter
+    }
+
     private fun setUpRestView() {
 
         try {
-            val soundURI = Uri.parse("android.resource://com.moonsunapp.a7minutesworkout/"+R.raw.press_start)
-            playerMedia=MediaPlayer.create(applicationContext,soundURI)
-            playerMedia?.isLooping=false
+            val soundURI =
+                Uri.parse("android.resource://com.moonsunapp.a7minutesworkout/" + R.raw.press_start)
+            playerMedia = MediaPlayer.create(applicationContext, soundURI)
+            playerMedia?.isLooping = false
             playerMedia?.start()
-        }
-        catch (e:Exception){
+        } catch (e: Exception) {
             e.printStackTrace()
         }
 
@@ -114,7 +135,7 @@ class ExerciseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private fun setProgressBar() {
         binding?.progressBar?.progress = restProgress
 
-        restTimer = object : CountDownTimer(restTimerDuration*1000, 1000) {
+        restTimer = object : CountDownTimer(restTimerDuration * 1000, 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 restProgress++
                 binding?.progressBar?.progress = 10 - restProgress
@@ -134,7 +155,7 @@ class ExerciseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private fun setProgressBarExercise() {
         binding?.progressBarExercise?.progress = exerciseProgress
 
-        exerciseTimer = object : CountDownTimer(exerciseTimerDuration*3000, 1000) {
+        exerciseTimer = object : CountDownTimer(exerciseTimerDuration * 3000, 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 exerciseProgress++
                 binding?.progressBarExercise?.progress = 30 - exerciseProgress
@@ -150,8 +171,8 @@ class ExerciseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                     exerciseAdapter!!.notifyDataSetChanged()
                     setUpRestView()
                 } else {
-                   finish()
-                    val intent=Intent(this@ExerciseActivity,ActivityFinish::class.java)
+                    finish()
+                    val intent = Intent(this@ExerciseActivity, ActivityFinish::class.java)
                     startActivity(intent)
                 }
             }
@@ -169,16 +190,20 @@ class ExerciseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             exerciseTimer?.cancel()
             exerciseProgress = 0
         }
-        if (tts!=null){
+        if (tts != null) {
             tts!!.stop()
             tts!!.shutdown()
         }
-        if (playerMedia!=null){
+        if (playerMedia != null) {
             playerMedia!!.stop()
         }
         binding = null
     }
 
+    override fun onBackPressed() {
+        customDialogForBackButton()
+       // super.onBackPressed()
+    }
     override fun onInit(status: Int) {
         if (status == TextToSpeech.SUCCESS) {
             //set US language for TTS

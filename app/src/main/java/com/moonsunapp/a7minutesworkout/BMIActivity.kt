@@ -156,4 +156,9 @@ class BMIActivity : AppCompatActivity() {
 
         return isValid
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        binding=null
+    }
 }

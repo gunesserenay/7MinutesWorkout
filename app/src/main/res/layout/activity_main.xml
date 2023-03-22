@@ -23,7 +23,7 @@
         android:layout_width="150dp"
         android:layout_height="150dp"
         android:background="@drawable/item_color_accent_border_ripple_background"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/flBMI"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/ivIcon">
@@ -38,5 +38,34 @@
             android:textStyle="bold" />
     </FrameLayout>
 
+<FrameLayout
+    android:layout_width="80dp"
+    android:layout_height="80dp"
+    android:id="@+id/flBMI"
+    android:background="@drawable/item_circular_color_accent_background"
+    app:layout_constraintBottom_toTopOf="@id/tvCalculator"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="BMI"
+        android:layout_gravity="center"
+        android:textColor="@color/white"
+        android:textSize="@dimen/default_button_text_size"
+        android:textStyle="bold" />
+</FrameLayout>
+    <TextView
+        android:layout_width="wrap_content"
+        android:id="@+id/tvCalculator"
+        android:layout_height="wrap_content"
+        android:text="Calculator"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_gravity="center"
+        android:textColor="@color/colorPrimary"
+        android:textSize="@dimen/default_button_text_size"
+        android:textStyle="bold" />
 </androidx.constraintlayout.widget.ConstraintLayout>
